@@ -6,6 +6,8 @@ public class SolidColor : MonoBehaviour
 
     public ComputeShader shader;
     public int texResolution = 256;
+    //public string kernelName = "SolidRed";
+    public string kernelName = "SolidYellow";
 
     Renderer rend;
     RenderTexture outputTexture;
@@ -27,7 +29,15 @@ public class SolidColor : MonoBehaviour
 
     private void InitShader()
     {
-        kernelHandle = shader.FindKernel("CSMain");
+        kernelHandle = shader.FindKernel(kernelName);
+        shader.SetInt("texResolution", texResolution);
+
+        int halfRes = texResolution >> 1;
+        int quarterRes = texResolution >> 2;
+
+        Vector4 rect = new Vector4(quarterRes, quarterRes, halfRes, halfRes);
+
+        shader.SetVector("rect", rect);
 
         shader.SetTexture(kernelHandle, "Result", outputTexture);
  

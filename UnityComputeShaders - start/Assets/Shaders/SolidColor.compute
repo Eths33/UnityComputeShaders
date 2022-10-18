@@ -1,13 +1,76 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel CSMain
+#pragma kernel SolidRed
+#pragma kernel SolidYellow
+#pragma kernel SplitScreen
+#pragma kernel Circle
+#pragma kernel Square
+#pragma kernel Square2
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Result;
+int texResolution;
+float4 rect;
+
+float inCircle(float2 pt, float radius) {
+    return (length(pt) < radius) ? 1.0 : 0.0;
+}
 
 [numthreads(8,8,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+void SolidRed (uint3 id : SV_DispatchThreadID)
 {
      Result[id.xy] = float4(1.0, 0.0, 0.0, 1.0);
 }
 
+[numthreads(8, 8, 1)]
+void SolidYellow (uint3 id : SV_DispatchThreadID)
+{
+    Result[id.xy] = float4(1.0, 1.0, 0.0, 1.0);
+}
+
+[numthreads(8, 8, 1)]
+void SplitScreen(uint3 id : SV_DispatchThreadID)
+{
+    int halfRez = texResolution >> 1; // equivelent to divide by 2
+    Result[id.xy] = float4(step(halfRez, id.x), step(halfRez, id.y), 0.0, 1.0);
+    // step(edge, x)
+    // returns (x >= edge) ? 1 : 0
+}
+
+[numthreads(8, 8, 1)]
+void Circle(uint3 id : SV_DispatchThreadID)
+{
+    int halfRez = texResolution >> 1; // equivelent to divide by 2
+    float res = (distance(float2(halfRez, halfRez), id.xy) < 30) ? 1.0 : 0.0;
+    //float res = inCircle((float2)((int2)id.xy - halfRez), (float2)(texResolution>>2));
+
+    Result[id.xy] = float4(res, res, 0.0, 1.0);
+}
+
+[numthreads(8, 8, 1)]
+void Square(uint3 id : SV_DispatchThreadID)
+{
+    int qRez = texResolution >> 2; // equivelent to divide by 2
+    int qRezHigh = texResolution - qRez;
+
+    // 7 conditions
+    float res = ((id.x > qRez && id.x < qRezHigh) && (id.y > qRez && id.y < qRezHigh)) ? 1.0 : 0.0;
+
+    Result[id.xy] = float4(0.0, 0.0, res, 1.0);
+}
+
+//------------------
+float inSquare(float2 pt, float4 rect) {
+    float horz = step(rect.x, pt.x) - step(rect.x + rect.z, pt.x);
+    float vert = step(rect.y, pt.y) - step(rect.y + rect.w, pt.y);
+    return horz * vert;
+}
+
+[numthreads(8, 8, 1)]
+void Square2(uint3 id : SV_DispatchThreadID)
+{
+    // 4 conditions
+    float res = inSquare((float2)id.xy, rect);
+
+    Result[id.xy] = float4(0.0, 0.0, res, 1.0);
+}
