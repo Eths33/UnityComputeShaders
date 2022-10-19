@@ -20,13 +20,19 @@ public class ParticleFun : MonoBehaviour
     const int SIZE_PARTICLE = 7 * sizeof(float);
 
     public int particleCount = 1000000;
-    public Material material;
-    public ComputeShader shader;
+    public Material material; // * Handle to the vertex-fragment shader ? *
+                              // This class exposes all properties from a material,
+                              // allowing you to animate them. You can also use it
+                              // to set custom shader properties that can't be accessed
+                              // through the inspector (e.g. matrices).
+
+    public ComputeShader shader; // Compute Shader asset.
+    
     [Range(1, 10)]
     public int pointSize = 2;
 
     int kernelID;
-    ComputeBuffer particleBuffer;
+    ComputeBuffer dev_particleBuffer;
 
     int groupSizeX; 
     
@@ -44,13 +50,26 @@ public class ParticleFun : MonoBehaviour
 
         for (int i = 0; i < particleCount; i++)
         {
-            //TO DO: Initialize particle
+            Vector3 v = new Vector3();
+            v.x = Random.value * 2f - 1.0f;
+            v.y = Random.value * 2f - 1.0f;
+            v.z = Random.value * 2f - 1.0f;
+            v.Normalize();
+            v *= Random.value * 0.5f;
+
+            particleArray[i].position.x = v.x;
+            particleArray[i].position.y = v.y;
+            particleArray[i].position.z = v.z + 3.0f;
+
+            particleArray[i].velocity = new Vector3(0.0f, 0.0f, 0.0f);
+
+            particleArray[i].life = Random.value * 0.5f + 1.0f;
         }
 
         // create compute buffer
-        particleBuffer = new ComputeBuffer(particleCount, SIZE_PARTICLE);
+        dev_particleBuffer = new ComputeBuffer(particleCount, SIZE_PARTICLE);
 
-        particleBuffer.SetData(particleArray);
+        dev_particleBuffer.SetData(particleArray);
 
         // find the id of the kernel
         kernelID = shader.FindKernel("CSParticle");
@@ -60,8 +79,9 @@ public class ParticleFun : MonoBehaviour
         groupSizeX = Mathf.CeilToInt((float)particleCount / (float)threadsX);
 
         // bind the compute buffer to the shader and the compute shader
-        shader.SetBuffer(kernelID, "particleBuffer", particleBuffer);
-        material.SetBuffer("particleBuffer", particleBuffer);
+        // Buffer is shared between compute shader and Vertex-fragment shader
+        shader.SetBuffer(kernelID, "particleBuffer", dev_particleBuffer);
+        material.SetBuffer("particleBuffer", dev_particleBuffer);
 
         material.SetInt("_PointSize", pointSize);
     }
@@ -74,8 +94,8 @@ public class ParticleFun : MonoBehaviour
 
     void OnDestroy()
     {
-        if (particleBuffer != null)
-            particleBuffer.Release();
+        if (dev_particleBuffer != null)
+            dev_particleBuffer.Release();
     }
 
     // Update is called once per frame
@@ -94,6 +114,7 @@ public class ParticleFun : MonoBehaviour
 
     void OnGUI()
     {
+        // https://gamedevbeginner.com/how-to-convert-the-mouse-position-to-world-space-in-unity-2d-3d/
         Vector3 p = new Vector3();
         Camera c = Camera.main;
         Event e = Event.current;

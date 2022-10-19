@@ -79,23 +79,28 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 	vertexBuffer[index].position.y = p.position.y-halfSize;
 	vertexBuffer[index].position.z = p.position.z;
 	vertexBuffer[index].life = p.life;
+
 	vertexBuffer[index+1].position.x = p.position.x-halfSize;
 	vertexBuffer[index+1].position.y = p.position.y+halfSize;
 	vertexBuffer[index+1].position.z = p.position.z;
 	vertexBuffer[index+1].life = p.life;
+
 	vertexBuffer[index+2].position.x = p.position.x+halfSize;
 	vertexBuffer[index+2].position.y = p.position.y+halfSize;
 	vertexBuffer[index+2].position.z = p.position.z;
 	vertexBuffer[index+2].life = p.life;
+
 	//Triangle 2 - bottom-left, top-right, bottom-right  // // 
 	vertexBuffer[index+3].position.x = p.position.x-halfSize;
 	vertexBuffer[index+3].position.y = p.position.y-halfSize;
 	vertexBuffer[index+3].position.z = p.position.z;
 	vertexBuffer[index+3].life = p.life;
+
 	vertexBuffer[index+4].position.x = p.position.x+halfSize;
 	vertexBuffer[index+4].position.y = p.position.y+halfSize;
 	vertexBuffer[index+4].position.z = p.position.z;
 	vertexBuffer[index+4].life = p.life;
+
 	vertexBuffer[index+5].position.x = p.position.x+halfSize;
 	vertexBuffer[index+5].position.y = p.position.y-halfSize;
 	vertexBuffer[index+5].position.z = p.position.z;

@@ -26,7 +26,7 @@ public class SimpleFlocking : MonoBehaviour
     public float boidSpeed = 1f;
     public float neighbourDistance = 1f;
     public float boidSpeedVariation = 1f;
-    public GameObject boidPrefab;
+    public GameObject boidPrefab; // Base class for all entities in Unity Scenes.
     public int boidsCount;
     public float spawnRadius;
     public Transform target;
@@ -86,7 +86,7 @@ public class SimpleFlocking : MonoBehaviour
 
         shader.Dispatch(kernelHandle, groupSizeX, 1, 1);
 
-        boidsBuffer.GetData(boidsArray);
+        boidsBuffer.GetData(boidsArray); // GPU -> CPU copy
 
         for (int i = 0; i < boidsArray.Length; i++)
         {
