@@ -57,6 +57,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 
 	uint nearbyCount = 1; // Add self that is ignored in loop
 
+	// n^2
 	for (uint i = 0; i < (uint)boidsCount; i++) {
 		if (i == instanceId)
 			continue;

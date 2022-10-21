@@ -22,6 +22,7 @@ public class SimpleFlocking : MonoBehaviour
 
     public ComputeShader shader;
 
+    // Adjustable proporties 
     public float rotationSpeed = 1f;
     public float boidSpeed = 1f;
     public float neighbourDistance = 1f;

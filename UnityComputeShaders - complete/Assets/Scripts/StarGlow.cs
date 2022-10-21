@@ -18,6 +18,8 @@ public class StarGlow : MonoBehaviour
 
     #region Field
 
+    // The following are editable settings in the Unity editor when Main Camera is selected in the StarGlow scene
+
     private static Dictionary<CompositeType, string> CompositeTypes = new Dictionary<CompositeType, string>()
     {
         { CompositeType._COMPOSITE_TYPE_ADDITIVE,         CompositeType._COMPOSITE_TYPE_ADDITIVE.ToString()         },
@@ -66,15 +68,25 @@ public class StarGlow : MonoBehaviour
 
     void Start()
     {
-        compositeTexID   = Shader.PropertyToID("_CompositeTex");
-        compositeColorID = Shader.PropertyToID("_CompositeColor");
-        brightnessSettingsID   = Shader.PropertyToID("_BrightnessSettings");
+        // Gets unique identifier for a shader property name.
+        // More efficant than using strings to access them
+
+
+        // All 
+        brightnessSettingsID = Shader.PropertyToID("_BrightnessSettings");
+        
+        // Step 2
         iterationID      = Shader.PropertyToID("_Iteration");
         offsetID         = Shader.PropertyToID("_Offset");
+
+        // Step 4
+        compositeTexID = Shader.PropertyToID("_CompositeTex");
+        compositeColorID = Shader.PropertyToID("_CompositeColor");
     }
 
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        // Allocate a temporary render texture. Release it using ReleaseTemporary as soon as you're done with it, so another call can start reusing it if needed.
         RenderTexture brightnessTex = RenderTexture.GetTemporary(source.width  / divide,
                                                                  source.height / divide,
                                                                  source.depth,
@@ -86,8 +98,8 @@ public class StarGlow : MonoBehaviour
         // STEP:1
         // Get resized brightness image.
 
-        material.SetVector
-        (brightnessSettingsID, new Vector3(threshold, intensity, attenuation));
+        // Shader.PropertyToID("_BrightnessSettings");
+        material.SetVector(brightnessSettingsID, new Vector3(threshold, intensity, attenuation));
 
         Graphics.Blit(source, brightnessTex, material, 1);
 

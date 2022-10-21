@@ -1,10 +1,20 @@
-﻿Shader "ImageEffect/StarGlow"
+﻿// ShaderLab is a declarative language that you use in shader 
+// source files.It uses a nested - braces syntax to describe a Shader object
+
+
+Shader "ImageEffect/StarGlow" // Defines a Shader object with a given name. Inspector GUI -> Shader -> ImageEffect -> StarGlow
 {
+    // ShaderLab
     Properties
     {
+        // Material property declarations go here https://docs.unity3d.com/Manual/SL-Properties.html
+
+        // Tells the Unity Editor to hide this property in the Inspector.
         [HideInInspector]
         _MainTex("Texture", 2D) = "white" {}
 
+        // KeywordEnum allows you to choose which of a set of shader keywords to enable. https://docs.unity3d.com/ScriptReference/MaterialPropertyDrawer.html
+        // Display a popup with ADDITIVE, SCREEN, COLORED_ADDITIVE, COLORED_SCREEN, DEBUG choices.
         [KeywordEnum(ADDITIVE, SCREEN, COLORED_ADDITIVE, COLORED_SCREEN, DEBUG)]
         _COMPOSITE_TYPE("Composite Type", Float) = 0
 
@@ -12,6 +22,7 @@
     }
     SubShader
     {
+        // The code that defines the rest of the SubShader goes here
         CGINCLUDE
 
         #include "UnityCG.cginc"
@@ -32,9 +43,12 @@
 
         Pass
         {
+            // The code that defines the Pass goes here https://docs.unity3d.com/2019.3/Documentation/Manual/ShaderTut2.html
             CGPROGRAM
 
-            #pragma vertex vert_img
+            // This pass contains two strages
+            #pragma vertex vert_img // 1) Built in shaders https://github.com/TwoTailsGames/Unity-Built-in-Shaders/blob/master/CGIncludes/UnityCG.cginc
+                                    // Transforms a point from object space to the camera’s clip space in homogeneous coordinates.
             #pragma fragment frag
 
             fixed4 frag(v2f_img input) : SV_Target
@@ -42,7 +56,7 @@
                 return tex2D(_MainTex, input.uv);
             }
 
-            ENDCG
+            ENDCG // End of cg/HLSL code
         }
 
         // STEP:1
@@ -143,6 +157,8 @@
 
             #pragma vertex vert_img
             #pragma fragment frag
+
+            // Connected to KeywordEnum https://docs.unity3d.com/ScriptReference/MaterialPropertyDrawer.html
             #pragma multi_compile _COMPOSITE_TYPE_ADDITIVE _COMPOSITE_TYPE_SCREEN _COMPOSITE_TYPE_COLORED_ADDITIVE _COMPOSITE_TYPE_COLORED_SCREEN _COMPOSITE_TYPE_DEBUG
 
             sampler2D _CompositeTex;

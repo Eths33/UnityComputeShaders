@@ -13,17 +13,19 @@
  
 		CGPROGRAM
 
+        fixed4 _Color;
 		sampler2D _MainTex;
 		sampler2D _BumpMap;
 		sampler2D _MetallicGlossMap;
+		
+		half _Metallic;
+        half _Glossiness;
+
 		struct Input {
 			float2 uv_MainTex;
 			float2 uv_BumpMap;
 			float3 worldPos;
 		};
-		half _Glossiness;
-		half _Metallic;
-		fixed4 _Color;
  
         #pragma surface surf Standard vertex:vert addshadow nolightmap
         #pragma instancing_options procedural:setup
