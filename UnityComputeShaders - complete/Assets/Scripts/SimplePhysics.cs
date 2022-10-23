@@ -52,6 +52,7 @@ public class SimplePhysics : MonoBehaviour
         groupSizeX = Mathf.CeilToInt((float)ballsCount / (float)x);
         numOfBalls = groupSizeX * (int)x;
 
+        // This property block is used only for avoiding an instancing bug. 
         props = new MaterialPropertyBlock();
         props.SetFloat("_UniqueID", Random.value);
 
@@ -76,6 +77,7 @@ public class SimplePhysics : MonoBehaviour
         ballsBuffer = new ComputeBuffer(numOfBalls, 10 * sizeof(float));
         ballsBuffer.SetData(ballsArray);
 
+        // Argument buffer for instancing
         argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
         if (ballMesh != null)
         {
@@ -106,7 +108,13 @@ public class SimplePhysics : MonoBehaviour
             shader.Dispatch(this.kernelHandle, groupSizeX, 1, 1);
         }
 
+        // 40k = 55 FPS
         Graphics.DrawMeshInstancedIndirect(ballMesh, 0, ballMaterial, bounds, argsBuffer, 0, props);
+
+        // 40k = 100 FPS
+        //Graphics.DrawMeshInstancedIndirect(ballMesh, 0, ballMaterial, bounds, argsBuffer, 0, props, UnityEngine.Rendering.ShadowCastingMode.Off, false);
+
+        // https://docs.unity3d.com/Manual/GPUInstancing.html don’t use GPU instancing for meshes that have fewer than 256 vertices.
     }
 
     void OnDestroy()

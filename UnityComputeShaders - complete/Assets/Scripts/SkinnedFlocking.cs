@@ -51,7 +51,8 @@ public class SkinnedFlocking : MonoBehaviour {
     private ComputeBuffer vertexAnimationBuffer;
     public Material boidMaterial;
     ComputeBuffer argsBuffer;
-    MaterialPropertyBlock props;
+    MaterialPropertyBlock props; // MaterialPropertyBlock is used in situations where you want to draw multiple objects with the same material,
+                                 // but slightly different properties. For example, if you want to slightly change the color of each mesh drawn.
     uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
     Boid[] boidsArray;
     int groupSizeX;
@@ -67,7 +68,7 @@ public class SkinnedFlocking : MonoBehaviour {
         groupSizeX = Mathf.CeilToInt((float)boidsCount / (float)x);
         numOfBoids = groupSizeX * (int)x;
 
-        bounds = new Bounds(Vector3.zero, Vector3.one * 1000);
+        bounds = new Bounds(Vector3.zero, Vector3.one * 2000);
 
         // This property block is used only for avoiding an instancing bug.
         props = new MaterialPropertyBlock();
@@ -122,7 +123,11 @@ public class SkinnedFlocking : MonoBehaviour {
         boidMaterial.SetBuffer("boidsBuffer", boidsBuffer);
         boidMaterial.SetInt("numOfFrames", numOfFrames);
 
-        if (frameInterpolation && !boidMaterial.IsKeywordEnabled("FRAME_INTERPOLATION"))
+        // Shader keywords determine which shader variants Unity uses. For information on working with local shader keywords
+        // and global shader keywords and how they interact, see https://docs.unity3d.com/Manual/shader-keywords-scripts.html
+        // https://docs.unity3d.com/ScriptReference/Shader.IsKeywordEnabled.html
+        // This sets a define and the define doesnt need to be explicitly defined in the code file
+        if (frameInterpolation && !boidMaterial.IsKeywordEnabled("FRAME_INTERPOLATION")) // Checks whether a global shader keyword is enabled.
             boidMaterial.EnableKeyword("FRAME_INTERPOLATION");
         if (!frameInterpolation && boidMaterial.IsKeywordEnabled("FRAME_INTERPOLATION"))
             boidMaterial.DisableKeyword("FRAME_INTERPOLATION");
@@ -175,7 +180,7 @@ public class SkinnedFlocking : MonoBehaviour {
             for(int j = 0; j < vertexCount; j++)
             {
                 Vector4 vertex = bakedMesh.vertices[j];
-                vertex.w = 1;
+                vertex.w = 1; // for the matrix multiplication
                 vertexAnimationData[(j * numOfFrames) +  i] = vertex;
             }
 

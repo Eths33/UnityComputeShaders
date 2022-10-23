@@ -43,7 +43,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 		ball.position.y = LIMITS_MIN_Y;
 
 		ball.velocity.xz *= 0.96;
-		ball.velocity.y = - ball.velocity.y * 0.8;
+		ball.velocity.y = - ball.velocity.y * 0.9;
 
 	}
 
@@ -57,7 +57,9 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 	float3 normal;
 	float3 relativeVelocity;
 
-	for ( int i = id.x + 1; i < ballsCount; i ++ ) {
+
+	// n^2
+	/*for (int i = id.x + 1; i < ballsCount; i++) {
 		Ball ball2 = ballsBuffer[ (uint)i ];
 
 		normal = ball.position - ball2.position;
@@ -79,10 +81,10 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 			ball.velocity -= normal;
 		}
 
-	}
+	}*/
 
 	ball.velocity.xz *= 0.98;
-	ball.velocity.y -= 9.8 * deltaTime;
+	ball.velocity.y -= 2.8 * deltaTime;
 
 	ballsBuffer[id.x] = ball;
 }

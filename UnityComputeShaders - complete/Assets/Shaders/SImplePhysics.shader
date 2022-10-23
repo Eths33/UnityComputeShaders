@@ -26,8 +26,20 @@
 		half _Metallic;
 		fixed4 _Color;
  
+
         #pragma surface surf Standard vertex:vert addshadow nolightmap
+    
+        //#pragma vertex vert
+        //#pragma fragment frag
+        //#pragma multi_compile_instancing
+
         #pragma instancing_options procedural:setup
+
+        // Another option is from https://docs.unity3d.com/2018.3/Documentation/Manual/PartSysInstancing.html
+        // #pragma instancing_options procedural:vertInstancingSetup
+        // #include "UnityStandardParticleInstancing.cginc"
+        // vertInstancingSetup -> vertInstancingMatrices: sets up worldToObject matrix
+        // but our balls are perfectly smooth so we dont need rotation
 
         float3 _BallPosition;
         float _Radius;
@@ -61,20 +73,22 @@
 
             #ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
                 v.vertex.xyz *= _Radius;
-                v.vertex.xyz += _BallPosition;
+                v.vertex.xyz += _BallPosition; // set by the compute shader
             #endif
         }
 
+        // This is called once per instance
         void setup()
         {
             #ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
                 _Color = ballsBuffer[unity_InstanceID].color;
                 _BallPosition = ballsBuffer[unity_InstanceID].position;
+                // no rotation needed
                 //_LookAtMatrix = look_at_matrix(_BoidPosition, _BoidPosition + (boidsBuffer[unity_InstanceID].direction * -1), float3(0.0, 1.0, 0.0));
             #endif
         }
  
-         void surf (Input IN, inout SurfaceOutputStandard o) {
+         void surf(Input IN, inout SurfaceOutputStandard o) {
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
 			fixed4 m = tex2D (_MetallicGlossMap, IN.uv_MainTex); 
 			o.Albedo = c.rgb;
@@ -83,6 +97,12 @@
 			o.Metallic = m.r;
 			o.Smoothness = _Glossiness * m.a;
          }
+
+         /*float4 frag(Input IN) : SV_Target
+         {
+             fixed4 color = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+             return color;
+         }*/
  
          ENDCG
    }

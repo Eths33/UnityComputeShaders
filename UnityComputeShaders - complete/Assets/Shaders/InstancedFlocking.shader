@@ -27,6 +27,11 @@
 			float3 worldPos;
 		};
  
+        // Surface Shaders is a code generation approach that makes it much easier to write lit 
+        // -shaders than using low level vertex/pixel shader programs.
+        // Surface Shader compiler then figures out what inputs are needed, what outputs are filled
+        // -and so on, and generates actual vertex&pixel shaders, as well as rendering passes to handle 
+        // -forward and deferred rendering.
         #pragma surface surf Standard vertex:vert addshadow nolightmap
         #pragma instancing_options procedural:setup
 

@@ -41,6 +41,11 @@ Shader "Flocking/Skinned" { // StructuredBuffer + SurfaceShader
         #pragma surface surf Standard vertex:vert addshadow nolightmap
         #pragma instancing_options procedural:setup
 
+        // Another option is from https://docs.unity3d.com/2018.3/Documentation/Manual/PartSysInstancing.html
+        // #pragma instancing_options procedural:vertInstancingSetup
+        // #include "UnityStandardParticleInstancing.cginc"
+        // vertInstancingSetup -> vertInstancingMatrices: sets up worldToObject matrix
+
         float4x4 _Matrix;
         int _CurrentFrame;
         int _NextFrame;
@@ -78,7 +83,10 @@ Shader "Flocking/Skinned" { // StructuredBuffer + SurfaceShader
         {
             #ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
             	#ifdef FRAME_INTERPOLATION
-                    v.vertex = lerp(vertexAnimation[v.id * numOfFrames + _CurrentFrame], vertexAnimation[v.id * numOfFrames + _NextFrame], _FrameInterpolation);
+                    // Interpolating between bird vertex animation farmaes
+                    v.vertex = lerp(vertexAnimation[v.id * numOfFrames + _CurrentFrame], 
+                                    vertexAnimation[v.id * numOfFrames + _NextFrame], 
+                                    _FrameInterpolation);
                 #else
                     v.vertex = vertexAnimation[v.id * numOfFrames + _CurrentFrame];
                 #endif
@@ -92,6 +100,7 @@ Shader "Flocking/Skinned" { // StructuredBuffer + SurfaceShader
                 _Matrix = create_matrix(boidsBuffer[unity_InstanceID].position, boidsBuffer[unity_InstanceID].direction, float3(0.0, 1.0, 0.0));
                 _CurrentFrame = boidsBuffer[unity_InstanceID].frame;
                 #ifdef FRAME_INTERPOLATION
+                    // Interpolating between bird vertex animation farmaes
                     _NextFrame = _CurrentFrame + 1;
                     if (_NextFrame >= numOfFrames) _NextFrame = 0;
                     _FrameInterpolation = frac(boidsBuffer[unity_InstanceID].frame);

@@ -85,6 +85,8 @@ public class ParticleFun : MonoBehaviour
     void OnRenderObject()
     {
         material.SetPass(0);
+
+        //Draws procedural geometry on the GPU.
         Graphics.DrawProceduralNow(MeshTopology.Points, 1, particleCount);
     }
 
