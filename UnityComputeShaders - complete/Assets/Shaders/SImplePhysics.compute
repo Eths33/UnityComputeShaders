@@ -58,30 +58,42 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 	float3 relativeVelocity;
 
 
-	// n^2
-	/*for (int i = id.x + 1; i < ballsCount; i++) {
+	// Target ball only computes its interaction with particles that 38R
+	for (int i = id.x + 1; i < ballsCount; i++) {
 		Ball ball2 = ballsBuffer[ (uint)i ];
 
+		//B1B2 vector pointing at ball 1 from ball 2
 		normal = ball.position - ball2.position;
 		
 		const float distance = length(normal);
 
+		// Radius * 2 becasue we need the distance from the center of one ball to the other
 		if ( distance < 2 * radius ) {
+			// If entered the balls surfaces have passed through each other
 
+			// Multiply vector by (1/2 * magnitude of the vector - radius) 
+			// d2m = 1/2 * magnitude = dist to mid point between the two centers of the interacting particles
+			// d2m - radius = distance from no collision and is negative since their is a collision
+			// n2
 			normal *= 0.5 * distance - radius;
 
+			//p1
 			ball.position -= normal;
 			
+			//n3
 			normal = normalize(normal);
 
+			//rv
 			relativeVelocity = ball.velocity - ball2.velocity;
 
+			// n4
 			normal *= dot( relativeVelocity, normal );
 
+			// bv
 			ball.velocity -= normal;
 		}
 
-	}*/
+	}
 
 	ball.velocity.xz *= 0.98;
 	ball.velocity.y -= 2.8 * deltaTime;

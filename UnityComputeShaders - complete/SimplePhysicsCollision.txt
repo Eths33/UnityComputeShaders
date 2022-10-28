@@ -1,0 +1,15 @@
+p0 = (0,0)
+n1 = (0, -8)
+v1 = -1
+n2 = (0, 8)
+p1 = (0, -8)
+n3 = (0, 1)
+rv = (0, 3)
+v2 = 3
+n4 = (0, 3)
+bv = (0, -2)
+
+Position and velocity are updated for each particle in a single step
+New Position: based on the position of B1 and B2
+New velocity: Direction is based on position of particles 
+                           Velocity is based on prior velocity of B1 and B2
