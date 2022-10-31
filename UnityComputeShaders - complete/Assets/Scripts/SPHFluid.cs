@@ -25,6 +25,7 @@ public class SPHFluid : MonoBehaviour
     }
     int SIZE_SPHPARTICLE = 11 * sizeof(float);
 
+    // The walls
     private struct SPHCollider
     {
         public Vector3 position;
@@ -58,7 +59,7 @@ public class SPHFluid : MonoBehaviour
     private static Vector4 GRAVITY = new Vector4(0.0f, -9.81f, 0.0f, 2000.0f);
     private const float DT = 0.0008f;
     private const float BOUND_DAMPING = -0.5f;
-    const float GAS = 2000.0f;
+    const float GAS = 2000.0f; // what is this?
 
     private float smoothingRadiusSq;
 
@@ -130,6 +131,7 @@ public class SPHFluid : MonoBehaviour
         particlesBuffer = new ComputeBuffer(particlesArray.Length, SIZE_SPHPARTICLE);
         particlesBuffer.SetData(particlesArray);
 
+        // The spinning wall
         UpdateColliders();
 
         argsArray[0] = particleMesh.GetIndexCount(0);
@@ -174,6 +176,7 @@ public class SPHFluid : MonoBehaviour
         float size = particleRadius * 1.1f;
         float center = rowSize * 0.5f;
 
+        // Creates particle block with some randomness on the X and Z axis 
         for (int i = 0; i < amount; i++)
         {
             Vector3 pos = new Vector3();

@@ -1,6 +1,8 @@
 ﻿// StableFluids - A GPU implementation of Jos Stam's Stable Fluids on Unity
 // https://github.com/keijiro/StableFluids
 
+// 43. Stable Fluids complete code on github has a different result compared to the video
+
 #pragma kernel Advect
 #pragma kernel Force
 #pragma kernel ProjectSetup

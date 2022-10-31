@@ -72,6 +72,8 @@ float3 DampVelocity(SPHCollider collider, float3 velocity, float drag)
             + dot(newVelocity, up) * up;
 }
 
+// Equation 1: sets density of the particle r_i as the weighted average of surrounding 
+// particles, within a radius set as the smoothing radius
 [numthreads(PARTICLETHREADCOUNT,1,1)]
 void ComputeDensityPressure (uint3 id : SV_DispatchThreadID)
 {
@@ -81,15 +83,22 @@ void ComputeDensityPressure (uint3 id : SV_DispatchThreadID)
 
     for (int j = 0; j < particleCount; j++)
     {
+        // vector between paricle id.x and j
         float3 relativePosition = particles[j].position - particle.position;
+
+        // distance squared
+        // rP2 >= 0 && rP2 <= smoothingRadiusSq (equ 20, Section 3.5)
         float rP2 = dot(relativePosition, relativePosition);
 
         if (rP2 < smoothingRadiusSq)
         {
+            // mass: is the same for all particles
+            // Müller's W_poly6 function (equ 20, Section 3.5)
             particle.density += mass * (315.0f / (64.0f * PI * pow(smoothingRadius, 9.0f))) * pow(smoothingRadiusSq - rP2, 3.0f);
         }
     }
 
+    // Ideal gas law, presure is set based on density
     particle.pressure = gas * (particle.density - restDensity);
 
     particles[id.x] = particle;
@@ -113,9 +122,10 @@ void ComputeForces (uint3 id : SV_DispatchThreadID)
         
         if (rP2 < smoothingRadiusSq)
         {
-            float r = length(relativePosition);
+            float r = length(relativePosition);// call sqrt on rP2?
             float3 rPN = normalize(relativePosition);
 
+            // Müller's methods
             forcePressure += -rPN * mass * (particle.pressure + particleJ.pressure) / (2.0f * particleJ.density) * (-45.0f / (PI * pow(smoothingRadius, 6.0f))) * pow(smoothingRadius - r, 2.0f);
             forceViscosity += particleViscosity * mass * (particleJ.velocity - particle.velocity) / particleJ.density * (45.0f / (PI * pow(smoothingRadius, 6.0f))) * (smoothingRadius - r);
         }
@@ -157,3 +167,7 @@ void ComputeColliders (uint3 id : SV_DispatchThreadID)
 
     particles[id.x] = particle;
 }
+
+
+
+// Equation 2: set the forces actions on the particles as the sum of the surrounding particles weighted by density and distance

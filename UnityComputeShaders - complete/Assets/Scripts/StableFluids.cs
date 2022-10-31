@@ -14,7 +14,11 @@ public class StableFluids : MonoBehaviour
     public ComputeShader compute;
     public Material material;
 
-   
+
+    [Range(1, 100)]
+    public int diffuseCount = 10;
+
+
     Vector2 previousInput;
 
     int kernelAdvect;
@@ -156,9 +160,9 @@ public class StableFluids : MonoBehaviour
         compute.SetFloat("Alpha", difalpha);
         compute.SetFloat("Beta", 4 + difalpha);
         Graphics.CopyTexture(vfbRTV2, vfbRTV1);
-        
+
         // Jacobi iteration
-        for (var i = 0; i < 20; i++)
+        for (var i = 0; i < diffuseCount; i++)
         {
             compute.SetTexture(kernelDiffuse2, "X2_in", vfbRTV2);
             compute.SetTexture(kernelDiffuse2, "X2_out", vfbRTV3);
@@ -190,7 +194,7 @@ public class StableFluids : MonoBehaviour
         compute.SetFloat("Alpha", -dx * dx);
         compute.SetFloat("Beta", 4);
 
-        for (var i = 0; i < 20; i++)
+        for (var i = 0; i < diffuseCount; i++)
         {
             compute.SetTexture(kernelDiffuse1, "X1_in", vfbRTP1);
             compute.SetTexture(kernelDiffuse1, "X1_out", vfbRTP2);
