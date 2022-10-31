@@ -30,10 +30,12 @@ public class StableFluids : MonoBehaviour
     int resolutionX { get { return threadCountX * 8; } }
     int resolutionY { get { return threadCountY * 8; } }
 
-    // Vector field buffers
+    // Vector field buffers - velocity
     RenderTexture vfbRTV1;
     RenderTexture vfbRTV2;
     RenderTexture vfbRTV3;
+
+    // Vector field buffers - preasure
     RenderTexture vfbRTP1;
     RenderTexture vfbRTP2;
 
@@ -43,9 +45,9 @@ public class StableFluids : MonoBehaviour
 
     RenderTexture CreateRenderTexture(int componentCount, int width = 0, int height = 0)
     {
-        var format = RenderTextureFormat.ARGBHalf;
-        if (componentCount == 1) format = RenderTextureFormat.RHalf;
-        if (componentCount == 2) format = RenderTextureFormat.RGHalf;
+        var format = RenderTextureFormat.ARGBHalf; // four component
+        if (componentCount == 1) format = RenderTextureFormat.RHalf; // one component
+        if (componentCount == 2) format = RenderTextureFormat.RGHalf; // two component
 
         if (width == 0) width = resolutionX;
         if (height == 0) height = resolutionY;
@@ -91,13 +93,17 @@ public class StableFluids : MonoBehaviour
         kernelDiffuse1 = compute.FindKernel("Diffuse1");
         kernelDiffuse2 = compute.FindKernel("Diffuse2");
 
+        // Different kernels can use the same HLSL variable to point at different textures
+        // Setbuffers and setTexture are per kernel and not per shader script
+        // ?point of confususion? 
+
         compute.SetTexture(kernelAdvect, "U_in", vfbRTV1);
-        compute.SetTexture(kernelAdvect, "W_out", vfbRTV2);
+        compute.SetTexture(kernelAdvect, "W_out", vfbRTV2); // *
 
         compute.SetTexture(kernelDiffuse2, "B2_in", vfbRTV1);
 
         compute.SetTexture(kernelForce, "W_in", vfbRTV2);
-        compute.SetTexture(kernelForce, "W_out", vfbRTV3);
+        compute.SetTexture(kernelForce, "W_out", vfbRTV3); // *
 
         compute.SetTexture(kernelProjectSetup, "W_in", vfbRTV3);
         compute.SetTexture(kernelProjectSetup, "DivW_out", vfbRTV2);
