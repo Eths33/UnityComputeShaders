@@ -77,16 +77,17 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 			// n2
 			normal *= 0.5 * distance - radius;
 
-			//p1
+			//p1 (*1)
 			ball.position -= normal;
 			
 			//n3
 			normal = normalize(normal);
 
-			//rv
+			//rv (vector)
 			relativeVelocity = ball.velocity - ball2.velocity;
 
-			// n4
+			// n4 how much the relative velocity applies in the direction in which we have just moved the ball (*1)
+			// How much we have adjusted the velocity to achive this movement 
 			normal *= dot( relativeVelocity, normal );
 
 			// bv

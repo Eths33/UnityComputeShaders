@@ -134,6 +134,8 @@ public class GPUPhysics : MonoBehaviour {
     	
 		// initial local particle positions within a rigidbody
 		int index = 0;
+
+		// scale = length of one side
 		float centerer = (particleDiameter - scale) * 0.5f;
 		Vector3 centeringOffset = new Vector3(centerer, centerer, centerer);
 
@@ -168,6 +170,7 @@ public class GPUPhysics : MonoBehaviour {
 
 	void InitShader()
 	{
+		// more efficiant that using a string lookup
 		deltaTimeID = Shader.PropertyToID("deltaTime");
 
 		shader.SetInt("particlesPerRigidBody", particlesPerBody);
@@ -192,7 +195,7 @@ public class GPUPhysics : MonoBehaviour {
 
 		// Count Thread Groups
 		groupsPerRigidBody = Mathf.CeilToInt(rigidBodyCount / 8.0f);
-		groupsPerParticle = Mathf.CeilToInt(particleCount / 8f);
+		groupsPerParticle = Mathf.CeilToInt(particleCount / 8.0f);
 
 		// Bind buffers
 
@@ -233,6 +236,7 @@ public class GPUPhysics : MonoBehaviour {
 		shader.SetFloat(deltaTimeID, dt);
 
 		for (int i=0; i<stepsPerUpdate; i++) {
+			// these calls are blocking
 			shader.Dispatch(kernelGenerateParticleValues, groupsPerRigidBody, 1, 1);
 			shader.Dispatch(kernelCollisionDetection, groupsPerParticle, 1, 1);
 			shader.Dispatch(kernelComputeMomenta, groupsPerRigidBody, 1, 1);

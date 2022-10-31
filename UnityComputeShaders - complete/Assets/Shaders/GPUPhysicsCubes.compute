@@ -340,14 +340,14 @@ void ComputeMomenta (uint3 id : SV_DispatchThreadID)
 		float threshold = 1.0 / pow(10.0,6);
 
 		float cubeMass = particleMass * body.particleCount;
-		body.velocity /= 1.0 + deltaTime*frictionCoefficient;
+		body.velocity /= 1.0 + deltaTime * frictionCoefficient;
 		body.velocity += linearForceScalar * deltaTime * linearForce * cubeMass;
 		if (length(body.velocity) < threshold) {
 			body.velocity = 0;
 		}
 
 		// new rotation
-		body.angularVelocity /= 1.0 + deltaTime*angularFrictionCoefficient;
+		body.angularVelocity /= 1.0 + deltaTime * angularFrictionCoefficient;
 		body.angularVelocity += angularForceScalar * deltaTime * angularForce; // probably wrong  
 		if (length(body.angularVelocity) < threshold) {
 			body.angularVelocity = 0;
