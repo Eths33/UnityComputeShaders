@@ -155,7 +155,7 @@ MonoBehaviour:
   shader: {fileID: 7200000, guid: a653ec14e1b8f4b99a3f32bd61bb0873, type: 3}
   ballMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   ballMaterial: {fileID: 2100000, guid: f257577638791416a902925bd6999190, type: 2}
-  ballsCount: 600
+  ballsCount: 100
   radius: 0.15
 --- !u!4 &204301668
 Transform:
