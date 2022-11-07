@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class SimplePhysics : MonoBehaviour
 {
@@ -12,8 +13,8 @@ public class SimplePhysics : MonoBehaviour
 
         public Ball(float posRange, float maxVel)
         {
-            position.x = Random.value * posRange - posRange/2;
-            position.y = Random.value * posRange;
+            position.x = Random.value * posRange - posRange / 2;
+            position.y = Random.value * posRange - posRange / 2;
             position.z = Random.value * posRange - posRange / 2;
             velocity.x = Random.value * maxVel - maxVel/2;
             velocity.y = Random.value * maxVel - maxVel / 2;
@@ -30,7 +31,7 @@ public class SimplePhysics : MonoBehaviour
     public Mesh ballMesh;
     public Material ballMaterial;
     public int ballsCount;
-    public float radius = 0.08f;
+    public float radius = 0.08f;// change
     
     int kernelHandle;
     ComputeBuffer ballsBuffer;
@@ -42,6 +43,9 @@ public class SimplePhysics : MonoBehaviour
     Bounds bounds;
    
     MaterialPropertyBlock props;
+
+    public TextMeshProUGUI Text;
+    public float avgFrameRate;
 
     void Start()
     {
@@ -60,6 +64,9 @@ public class SimplePhysics : MonoBehaviour
 
         InitBalls();
         InitShader();
+
+        Text = GetComponentInChildren(typeof(TextMeshProUGUI)) as TextMeshProUGUI;
+        Text.text = "Okay";
     }
 
     private void InitBalls()
@@ -68,7 +75,7 @@ public class SimplePhysics : MonoBehaviour
 
         for (int i = 0; i < numOfBalls; i++)
         {
-            ballsArray[i] = new Ball(4, 0.01f);
+            ballsArray[i] = new Ball(5, 0.01f);
         }
     }
 
@@ -115,6 +122,16 @@ public class SimplePhysics : MonoBehaviour
         //Graphics.DrawMeshInstancedIndirect(ballMesh, 0, ballMaterial, bounds, argsBuffer, 0, props, UnityEngine.Rendering.ShadowCastingMode.Off, false);
 
         // https://docs.unity3d.com/Manual/GPUInstancing.html don’t use GPU instancing for meshes that have fewer than 256 vertices.
+
+        avgFrameRate = Time.frameCount / Time.time;
+        string temp = "FPS: "; 
+        temp += avgFrameRate.ToString();
+        temp += "\nWidth:  ";
+        temp += Screen.width.ToString();
+        temp += "\nHeight: ";
+        temp += Screen.height.ToString();
+        //temp += Screen.currentResolution.ToString();
+        Text.text = temp;
     }
 
     void OnDestroy()
