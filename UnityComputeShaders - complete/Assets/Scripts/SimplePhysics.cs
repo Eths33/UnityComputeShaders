@@ -103,10 +103,10 @@ public class SimplePhysics : MonoBehaviour
         int iterations = 5;
         shader.SetFloat("deltaTime", Time.deltaTime/iterations);
 
-        for (int i = 0; i < iterations; i++)
+        /*for (int i = 0; i < iterations; i++)
         {
             shader.Dispatch(this.kernelHandle, groupSizeX, 1, 1);
-        }
+        }*/
 
         // 40k = 55 FPS
         Graphics.DrawMeshInstancedIndirect(ballMesh, 0, ballMaterial, bounds, argsBuffer, 0, props);

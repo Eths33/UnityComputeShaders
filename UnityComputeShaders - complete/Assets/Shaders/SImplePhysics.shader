@@ -27,7 +27,8 @@
 		fixed4 _Color;
  
 
-        #pragma surface surf Standard vertex:vert addshadow nolightmap
+        //#pragma surface surf Standard vertex:vert addshadow nolightmap
+        #pragma surface surf Standard vertex:vert nolightmap
     
         //#pragma vertex vert
         //#pragma fragment frag
